@@ -192,7 +192,7 @@ int main()
 }
 ```
 
-## Write a program in C to implement dinning philosopher’s problem using semaphore.
+## LAB-9 Write a program in C to implement dinning philosopher’s problem using semaphore.
 #### gcc -pthread -o lab9 lab9.c
 ```
 #include <stdio.h>
