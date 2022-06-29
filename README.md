@@ -1,6 +1,6 @@
 # os
 
-## _Create process using fork() system call and use getpid(), getppid() functions along with wait() and exit() using C programming._
+## LAB-4 _Create process using fork() system call and use getpid(), getppid() functions along with wait() and exit() using C programming._
 ```
 #include <stdio.h>
 #include <stdlib.h>
@@ -27,7 +27,8 @@ int main(void){
 }
 ```
 
-## _Write a program in C to implement dinning philosopher’s problem using semaphore._
+## Write a program in C to implement dinning philosopher’s problem using semaphore.
+#### gcc -pthread -o lab9 lab9.c
 ```
 #include <stdio.h>
 #include <stdlib.h>
@@ -117,7 +118,7 @@ void dine(int n)
 }
 
 ```
-## _Write a program in C to implement reader-writer problem using monitors. (pthread)_
+## LAB-10 reader-writer problem using monitors. (pthread)
 ```
 #include<semaphore.h>
 #include<stdio.h>
@@ -199,6 +200,68 @@ int main()
         pthread_join(r[4],NULL);
 
         return(0);
+}
+```
+## READER WRITER USING SEMAPHORE
+#### code to run gcc -o lab9 lab9.c -pthread
+
+```
+#include <pthread.h>
+#include <semaphore.h>
+#include <stdio.h>
+
+sem_t wrt;
+pthread_mutex_t mutex;
+int cnt = 1;
+int numreader = 0;
+
+void *writer(void *wno)
+{
+    sem_wait(&wrt);
+    cnt = cnt*2;
+    printf("Writer %d modified cnt to %d\n",(*((int *)wno)),cnt);
+    sem_post(&wrt);
+
+}
+void *reader(void *rno)
+{   
+    pthread_mutex_lock(&mutex);
+    numreader++;
+    if(numreader == 1) {
+        sem_wait(&wrt); // If this id the first reader, then it will block the writer
+    }
+    pthread_mutex_unlock(&mutex);
+    printf("Reader %d: read cnt as %d\n",*((int *)rno),cnt);
+    pthread_mutex_lock(&mutex);
+    numreader--;
+    if(numreader == 0) {
+        sem_post(&wrt); // If this is the last reader, it will wake up the writer.
+    }
+    pthread_mutex_unlock(&mutex);
+}
+
+int main()
+{
+
+    pthread_t read[10],write[5];
+    pthread_mutex_init(&mutex, NULL);
+    sem_init(&wrt,0,1);
+    int a[10] = {1,2,3,4,5,6,7,8,9,10}; //Just used for numbering the producer and consumer
+    for(int i = 0; i < 10; i++) {
+        pthread_create(&read[i], NULL, (void *)reader, (void *)&a[i]);
+    }
+    for(int i = 0; i < 5; i++) {
+        pthread_create(&write[i], NULL, (void *)writer, (void *)&a[i]);
+    }
+    for(int i = 0; i < 10; i++) {
+        pthread_join(read[i], NULL);
+    }
+    for(int i = 0; i < 5; i++) {
+        pthread_join(write[i], NULL);
+    }
+    pthread_mutex_destroy(&mutex);
+    sem_destroy(&wrt);
+    return 0;
 }
 ```
 
@@ -287,6 +350,73 @@ printf("\nElements Sorted Using selectionsort:");
         fork1();
         return 0;
  }
+```
+### LAB-11 ROUND ROBIN
+#### code to run gcc lab11.c -o lab11 -lcurses
+```
+#include<stdio.h>
+#include<curses.h>
+
+void main()
+{
+    int i, NOP, sum=0,count=0, y, quant, wt=0, tat=0, at[10], bt[10], temp[10];
+    float avg_wt, avg_tat;
+    printf(" Total number of process in the system: ");
+    scanf("%d", &NOP);
+    y = NOP;
+    for(i=0; i<NOP; i++)
+    {
+    printf("\n Enter the Arrival and Burst time of the Process[%d]\n", i+1);
+    printf(" Arrival time is: \t");
+    scanf("%d", &at[i]);
+    printf(" \nBurst time is: \t");
+    scanf("%d", &bt[i]);
+    temp[i] = bt[i];
+    }
+    printf("Enter the Time Quantum for the process: \t");
+    scanf("%d", &quant);
+    printf("\n Process No \t\t Burst Time \t\t TAT \t\t Waiting Time ");
+    for(sum=0, i = 0; y!=0; )
+    {
+        if(temp[i] <= quant && temp[i] > 0) // define the conditions   
+        {
+            sum = sum + temp[i];
+            temp[i] = 0;
+            count=1;
+        }
+        else if(temp[i] > 0)
+        {
+            temp[i] = temp[i] - quant;
+            sum = sum + quant;
+        }
+        if(temp[i]==0 && count==1)
+        {
+            y--; //decrement the process no.  
+            printf("\nProcess No[%d] \t\t %d\t\t\t\t %d\t\t\t %d", i+1, bt[i], sum-at[i], sum-at[i]-bt[i]);
+            wt = wt+sum-at[i]-bt[i];
+            tat = tat+sum-at[i];
+            count =0;
+
+}
+        if(i==NOP-1)
+        {
+            i=0;
+        }
+        else if(at[i+1]<=sum)
+        {
+            i++;
+        }
+        else
+        {
+            i=0;
+        }
+    }
+    avg_wt = wt * 1.0/NOP;
+    avg_tat = tat * 1.0/NOP;
+    printf("\n Average Turn Around Time: \t%f", avg_wt);
+    printf("\n Average Waiting Time: \t%f", avg_tat);
+    getch();
+}
 ```
 
 ## _To understand the overlay concepts and practice how to overlay the current process to new process in Linux using C._
