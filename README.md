@@ -57,7 +57,7 @@ int main()
 ```
 ## LAB-6 program for interprocess communication using shared memory
 
-#### PRODUCER CODE :
+#### PRODUCER CODE.c :
 ```
 #include <iostream>
 #include <sys/ipc.h>
@@ -75,7 +75,7 @@ int main() {
    shmdt(str);
 }
 ```
-#### CONSUMER CODE
+#### CONSUMER CODE.c
 ```
 #include <iostream>
 #include <sys/ipc.h>
@@ -93,7 +93,7 @@ int main() {
 ```
 ## LAB-7 interprocess communication through message passing
 
-#### WRITER :
+#### WRITER.c :
 ```
 #include <stdio.h>
 #include <sys/ipc.h>
@@ -119,7 +119,7 @@ int main()
         return 0;
 }
 ```
-#### READER:
+#### READER.c:
 ```
 #include <stdio.h>
 #include <sys/ipc.h>
@@ -430,7 +430,7 @@ int main()
 }
 ```
 
-## _Implement the C program in which main program accepts the integers to be sorted Main program uses the fork system call to create a new process called a child process. Parent process sorts the integers using insertion sort and waits for child process using wait system call to sort the integers using selection sort._
+##  LAB-12 Implement the C program in which main program accepts the integers to be sorted Main program uses the fork system call to create a new process called a child process. Parent process sorts the integers using insertion sort and waits for child process using wait system call to sort the integers using selection sort.
 
 ```
 #include<stdio.h>
@@ -584,7 +584,7 @@ void main()
 }
 ```
 
-## _To understand the overlay concepts and practice how to overlay the current process to new process in Linux using C._
+## LAB-13 To understand the overlay concepts and practice how to overlay the current process to new process in Linux using C.
 #### hello.c
 ```
 #include<stdio.h>
