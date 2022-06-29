@@ -26,6 +26,171 @@ int main(void){
         return EXIT_SUCCESS;
 }
 ```
+## LAB-5 unidirectional pipe using c programming
+#### gcc lab5.c -o lab5
+#### ./lab5
+```
+include <stdio.h>
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/wait.h>
+int main()
+{
+        int fd[2], n;
+        char buffer[100];
+        pid_t p;
+        pipe(fd);
+        p=fork();
+        if ( p > 0 )
+        {
+                printf("Parent Passing value to child\n");
+                write(fd[1],"hello\n" ,6);
+                wait(NULL);
+        }
+        else
+        {
+                printf("Child printing received value\n");
+                n = read(fd[0],buffer,100);
+                write(1,buffer,n);
+        }
+}
+```
+## LAB-6 program for interprocess communication using shared memory
+
+#### PRODUCER CODE :
+```
+#include <iostream>
+#include <sys/ipc.h>
+#include <sys/shm.h>
+#include <stdio.h>
+using namespace std;
+int main() {
+   key_t my_key = ftok("shmfile",65); // ftok function is used to generate unique key
+   int shmid = shmget(my_key,1024,0666|IPC_CREAT); // shmget returns an ide in shmid
+   char *str = (char * ) shmat (shmid,( void * )0,0); // shmat to join to shared memory
+   cout<<"Write Data : ";
+   fgets(str, 50, stdin);
+   printf("Data written in memory: %s\n",str);
+   //detach from shared memory
+   shmdt(str);
+}
+```
+#### CONSUMER CODE
+```
+#include <iostream>
+#include <sys/ipc.h>
+#include <sys/shm.h>
+#include <stdio.h>
+using namespace std;
+int main() {
+   key_t my_key = ftok("shmfile",65); // ftok function is used to generate unique key
+   int shmid = shmget(my_key,1024,0666|IPC_CREAT); // shmget returns an ide in shmid
+   char * str = (char * ) shmat(shmid,(void * )0,0); // shmat to join to shared memory
+   printf("Data read from memory: %s\n",str);
+   shmdt(str);
+   shmctl(shmid,IPC_RMID,NULL); // destroy the shared memory
+}
+```
+## LAB-7 interprocess communication through message passing
+
+#### WRITER :
+```
+#include <stdio.h>
+#include <sys/ipc.h>
+#include <sys/msg.h>
+#define MAX 10
+
+struct mesg_buffer {
+        long mesg_type;
+        char mesg_text[100];
+}message;
+
+int main()
+{
+        key_t key;
+        int msgid;
+        key = ftok("progfile",65);
+        msgid = msgget(key,0666 | IPC_CREAT);
+        message.mesg_type = 1;
+        printf("Write Data : ");
+        fgets(message.mesg_text,MAX,stdin);
+        msgsnd(msgid,&message,sizeof(message),0);
+        printf("Data send is : %s \n",message.mesg_text);
+        return 0;
+}
+```
+#### READER:
+```
+#include <stdio.h>
+#include <sys/ipc.h>
+#include <sys/msg.h>
+
+struct mesg_buffer {
+        long mesg_type;
+        char mesg_text[100];
+}message;
+
+int main()
+{
+        key_t key;
+        int msgid;
+        key = ftok("progfile",65);
+        msgid = msgget(key,0666 | IPC_CREAT);
+        msgrcv(msgid, &message, sizeof(message),1,0);
+        printf("Data send is : %s \n",message.mesg_text);
+        msgctl(msgid, IPC_RMID, NULL);
+        return 0;
+}
+```
+
+## LAB-8 ODD - EVEN USING PARENT CHILD
+```
+#include <stdio.h>
+#include <stdlib.h>
+#include <sys/types.h>
+#include <sys/wait.h>
+#include <unistd.h>
+
+int main()
+{
+        int i;
+        pid_t pid = fork();
+        int arr[10]={1,2,3,4,5,6,7,8,9,10},sumodd=0,sumeven=0;
+        if ( pid == 0 )
+        {
+                printf("Child => PPID: %d PID: %d\n", getppid(), getpid());
+                for(i = 0; i < 10; i += 1)
+                {
+                        if( arr[i]%2 == 0)
+                        {
+                                sumeven+= arr[i];
+                        }
+                }
+                printf("Sum of even series : %d\n", sumeven);
+                exit(EXIT_SUCCESS);
+        }
+        else if ( pid > 0 )
+        {
+                printf("Parent => PID: %d\n", getpid());
+                printf("Waiting for child process to finish.\n");
+                wait(NULL);
+                printf("Child process finished.\n");
+                for(i = 0; i < 10; i += 1)
+                {
+                        if( arr[i]%2 != 0)
+                        {
+                                sumodd+= arr[i];
+                        }
+                }
+                printf("Sum of odd series : %d\n", sumodd);
+        }
+        else
+        {
+                printf("Unable to create child process. \n");
+        }
+        return EXIT_SUCCESS;
+}
+```
 
 ## Write a program in C to implement dinning philosopher’s problem using semaphore.
 #### gcc -pthread -o lab9 lab9.c
