@@ -1,5 +1,33 @@
 # os
 
+## SHELL SCRIPT
+
+```
+for var in 0,1,2,3,4
+do
+        echo $var
+done
+```
+```
+echo " enter a "
+read a
+echo " enter b "
+read b
+if [ $a == $b ]
+then
+        echo " $a is equal to $b "
+fi
+if [ $a != $b ]
+then
+        echo " $a is not equal to $b "
+fi
+```
+```
+echo " enter your name "
+read name
+echo " your name is $name "
+```
+
 ## LAB-4 _Create process using fork() system call and use getpid(), getppid() functions along with wait() and exit() using C programming._
 ```
 #include <stdio.h>
